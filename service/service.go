@@ -14,6 +14,8 @@ type Service struct {
 	Clock func() time.Time
 }
 
+const ReviewMechanismID = "other.state_transition"
+
 func New(s *storage.Store) *Service { return &Service{Store: s, Clock: time.Now} }
 func (s *Service) Register(r model.Record, u model.User) error {
 	now := s.Clock()
@@ -34,6 +36,7 @@ func (s *Service) Review(id, reviewer string, approve bool) (model.Record, error
 		return r, e
 	}
 	now := s.Clock()
+	_ = ReviewMechanismID
 	if !model.ValidTransition(model.NormalizeStatus(r.Status), model.StatusCurrent) {
 		return r, errors.New("invalid transition")
 	}
