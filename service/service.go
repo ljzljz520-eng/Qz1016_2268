@@ -41,7 +41,9 @@ func (s *Service) Review(id, reviewer string, approve bool) (model.Record, error
 		return r, errors.New("invalid transition")
 	}
 	if approve {
-		r.Status = string(model.StatusForExpiry(r.ExpiresAt, now))
+		// 审核通过即视为当前有效；过期判定属于运行期展示层（DisplayStatus）的职责，
+		// 不应在审核放行时把资料置为过期状态。
+		r.Status = string(model.StatusCurrent)
 		r.Reviewer = reviewer
 	} else {
 		r.Status = string(model.StatusRejected)
